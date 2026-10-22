@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>玄鉴 · 依经据典的术数推演</title>
+<meta name="description" content="玄鉴：周公解梦、择日吉凶、四柱八字、六爻纳甲、梅花易数、紫微斗数、河洛理数、手相面相、道德经。一切推算皆列依据与过程。">
+<meta name="theme-color" content="#9c3320">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <div class="brand-seal">玄</div>
+      <div class="brand-txt">
+        <span class="brand-name">玄鉴</span>
+        <span class="brand-sub">观象 · 知数 · 明理</span>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="#/home" data-route="home">首页</a>
+      <a href="#/huangli" data-route="huangli">黄历吉凶</a>
+      <a href="#/bazi" data-route="bazi">四柱八字</a>
+      <a href="#/liuyao" data-route="liuyao">六爻纳甲</a>
+      <a href="#/meihua" data-route="meihua">梅花易数</a>
+      <a href="#/ziwei" data-route="ziwei">紫微斗数</a>
+      <a href="#/heluo" data-route="heluo">河洛理数</a>
+      <a href="#/dream" data-route="dream">周公解梦</a>
+      <a href="#/palm" data-route="palm">手相</a>
+      <a href="#/face" data-route="face">面相</a>
+      <a href="#/daodejing" data-route="daodejing">道德经</a>
+      <a href="#/about" data-route="about">依据</a>
+    </nav>
+  </div>
+</header>
+
+<main id="app">
+  <div class="card"><div class="card-title"><h2>载入中</h2></div><p class="muted">正在装配历法与卦爻数据……</p></div>
+</main>
+
+<noscript>
+  <div style="max-width:1120px;margin:0 auto;padding:24px 22px"><div class="card"><div class="card-title"><h2>需要启用 JavaScript</h2></div>
+  <p class="muted">本站的历法、排盘、断卦全部在你的浏览器本地完成，不上传任何数据；请启用 JavaScript 后再访。</p></div></div>
+</noscript>
+
+<footer>
+  <div class="foot-in">
+    <p>玄鉴 · 一切推演皆依典籍，凡引原文必标明出处，凡属推演必注明方法。</p>
+    <p class="muted small">命理为象数之学，可供参详，不可执迷。凡涉疾病、诉讼、投资、婚姻之决断，请咨询专业人士。</p>
+  </div>
+</footer>
+
+<!-- 内核 -->
+<script src="assets/js/lib/calendar.js"></script>
+<script src="assets/js/lib/lunar.js"></script>
+<script src="assets/js/lib/bazi.js"></script>
+<script src="assets/js/lib/liuyao.js"></script>
+<script src="assets/js/lib/meihua.js"></script>
+<script src="assets/js/lib/ziwei.js"></script>
+<script src="assets/js/lib/heluo.js"></script>
+<script src="assets/js/lib/xiang.js"></script>
+<!-- 数据 -->
+<script src="assets/js/data/hexagrams.js"></script>
+<script src="assets/js/data/dreams.js"></script>
+<script src="assets/js/data/daodejing.js"></script>
+<!-- 外壳与视图 -->
+<script src="assets/js/app.js"></script>
+<script src="assets/js/views/home.js"></script>
+<script src="assets/js/views/bazi.js"></script>
+<script src="assets/js/views/divine.js"></script>
+<script src="assets/js/views/ziwei.js"></script>
+<script src="assets/js/views/xiang.js"></script>
+<script src="assets/js/views/dream.js"></script>
+<script src="assets/js/views/daodejing.js"></script>
+<script>
+  if (window.XJApp) XJApp.start();
+</script>
+</body>
+</html>
