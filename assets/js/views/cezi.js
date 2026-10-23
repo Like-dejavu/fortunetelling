@@ -171,7 +171,6 @@
       '<div class="form-grid">' +
       U.field('所测之字', '<input type="text" name="char" maxlength="2" placeholder="写一个字，如 明" value="' + U.esc(defCh) + '" required>', '一字为宜；须为本站形数表所收之字（约 9,159 字，含常用繁体）') +
       U.field('所占之时', '<input type="datetime-local" name="when" value="' + nowVal() + '">', '测字以时为机，取当下为准') +
-      U.field('所问何事', '<input type="text" name="q" placeholder="如：下月的面试能不能过" value="' + U.esc(defQ) + '" required>', '问得越具体，触机越真') +
       '</div>' +
       '<div class="btn-row"><button class="btn" type="submit">起　字</button>' +
       '<button class="btn btn-ghost" type="button" id="cz-random">随手取一字</button></div>' +
@@ -220,7 +219,6 @@
 
     if (!ch) { out.innerHTML = U.card('', U.err('请先写一个字。')); return; }
     if (ch.length > 1) { out.innerHTML = U.card('', U.err('一次只测一字。古人云「一字一机」，多字则象杂。')); return; }
-    if (!q) { out.innerHTML = U.card('', U.err('请写下所问何事，否则无从触机。')); return; }
 
     var r;
     try {
@@ -301,11 +299,12 @@
       var f = document.getElementById('cz-form');
       var ch = pool.charAt(Math.floor(Math.random() * pool.length));
       f.querySelector('[name="char"]').value = ch;
+      run(f);
     });
     /* 路由带字则直出 */
     var ch0 = (U.formVal(form, 'char') || '').trim();
     var q0 = (U.formVal(form, 'q') || '').trim();
-    if (ch0 && q0) run(form);
+    if (ch0) run(form);
   }
 
   App.page('cezi', { render: render, after: after });

@@ -119,8 +119,7 @@
         U.field('子时划分', U.select('ziRule', [{ v: 'late', t: '夜子时（23:00 起为次日）' }, { v: 'early', t: '早子时（23:00 仍属当日）' }], 'late')) +
         U.field('经度（真太阳时）', '<input type="number" name="lon" value="116.4" step="0.1" min="73" max="135">', '东经，北京 116.4，上海 121.5') +
         U.field('真太阳时', U.radios('ts', [{ v: '1', t: '校正' }, { v: '0', t: '不校正' }], '1'), '校正含经度差与均时差') +
-        '<div style="grid-column:1/-1">' + U.askField('') + '</div>' +
-        '</div><div class="btn-row"><button class="btn" type="submit">排盘</button>' +
+          '</div><div class="btn-row"><button class="btn" type="submit">排盘</button>' +
         '<span class="muted small">日期范围 1900–2100（农历表上限）；节气时刻误差约数分钟</span></div></form></div>';
 
       html += '<div id="bz-out"></div>';
@@ -142,7 +141,7 @@
             trueSolar: U.formVal(f, 'ts') === '1',
             longitude: parseFloat(U.formVal(f, 'lon')) || 120
           });
-          out.innerHTML = renderResult(r, U.askValue(f));
+          out.innerHTML = renderResult(r, '');
         } catch (e) {
           out.innerHTML = U.err('排盘失败：' + (e && e.message ? e.message : e));
           console.error(e);

@@ -623,3 +623,12 @@ html { -webkit-text-size-adjust: 100%; }
   .topsearch { flex: 1 1 100%; min-width: 0; margin-bottom: 6px; }
   .topsearch input { font-size: 16px; }
 }
+
+/* ---------------- 问事结果里的跳转 ---------------- */
+.jump-row { margin: 10px 0 0; }
+.jump {
+  display: inline-block; font-family: var(--kai); font-size: 15px; letter-spacing: .06em;
+  padding: 5px 12px; border: 1px solid var(--line-strong); border-radius: 2px;
+  color: var(--cinnabar); background: rgba(255, 253, 247, .9); text-decoration: none;
+}
+.jump:hover { border-color: var(--cinnabar); background: rgba(156, 51, 32, .06); text-decoration: none; }

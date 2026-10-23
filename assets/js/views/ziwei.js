@@ -33,8 +33,7 @@
         U.field('出生日期（公历）', '<input type="date" name="date" value="1990-06-17">') +
         U.field('出生时辰', U.select('hour', C.ZHI.map(function (z, i) { return { v: i, t: z + '时（' + C.SHICHEN_NAME[i] + '）' }; }), 5)) +
         U.field('性别', U.radios('gender', ['男', '女'], '女'), '决定大限顺逆') +
-        '<div style="grid-column:1/-1">' + U.askField('') + '</div>' +
-        '</div><div class="btn-row"><button class="btn" type="submit">排紫微盘</button>' +
+          '</div><div class="btn-row"><button class="btn" type="submit">排紫微盘</button>' +
         '<span class="muted small">农历范围 1900–2100</span></div></form></div>' +
         '<div id="zw-out"></div>';
       return html;
@@ -47,7 +46,7 @@
           var hz = parseInt(U.formVal(f, 'hour'), 10);
           var dt = new Date(dv[0], dv[1] - 1, dv[2], hz === 0 ? 0 : hz * 2 - 1, 30, 0);
           var r = root.XJZiwei.analyze({ date: dt, gender: U.formVal(f, 'gender') || '男' });
-          out.innerHTML = renderZiwei(r, U.askValue(f));
+          out.innerHTML = renderZiwei(r, '');
         } catch (e) {
           out.innerHTML = U.err('排盘失败：' + (e && e.message ? e.message : e));
           console.error(e);
@@ -149,8 +148,7 @@
         U.field('出生日期（公历）', '<input type="date" name="date" value="1990-06-17">') +
         U.field('出生时刻', '<input type="time" name="time" value="10:30">') +
         U.field('性别', U.radios('gender', ['男', '女'], '男')) +
-        '<div style="grid-column:1/-1">' + U.askField('') + '</div>' +
-        '</div><div class="btn-row"><button class="btn" type="submit">推河洛数</button></div></form></div>' +
+          '</div><div class="btn-row"><button class="btn" type="submit">推河洛数</button></div></form></div>' +
         '<div id="hl2-out"></div>';
 
       html += U.card('化数表', '<table><thead><tr><th>天干（河图数）</th><th>数</th><th>地支（洛书数）</th><th>数</th></tr></thead><tbody>' +
@@ -172,7 +170,7 @@
           var tv = U.formVal(f, 'time').split(':').map(Number);
           var dt = new Date(dv[0], dv[1] - 1, dv[2], tv[0] || 0, tv[1] || 0, 0);
           var r = root.XJHeluo.analyze({ date: dt, gender: U.formVal(f, 'gender') || '男', year: dv[0] });
-          out.innerHTML = renderHeluo(r, U.askValue(f));
+          out.innerHTML = renderHeluo(r, '');
         } catch (e) {
           out.innerHTML = U.err('起数失败：' + (e && e.message ? e.message : e));
           console.error(e);

@@ -56,8 +56,7 @@
         U.field('地纹（生命线）', U.select('地纹', opts(X.LINE_TRAITS), '长而秀')) +
         U.field('掌丘（择最显者）', U.select('qiu', [{ v: '均平', t: '均平（无可择）' }].concat(opts(X.PALM_QIU)), '均平')) +
         U.field('掌色', U.select('se', opts(X.ZHANG_SE), '红润')) +
-        U.askField('') +
-        '</div><div class="btn-row"><button class="btn" type="submit">出断语</button></div></form>' +
+          '</div><div class="btn-row"><button class="btn" type="submit">出断语</button></div></form>' +
         '</div></div><div id="palm-out"></div>';
 
       html += U.card('三才纹解', '<table><thead><tr><th>纹</th><th>今名</th><th>所主</th><th>古说</th></tr></thead><tbody>' +
@@ -78,7 +77,7 @@
           地纹: U.formVal(f, '地纹'), qiu: U.formVal(f, 'qiu'), se: U.formVal(f, 'se')
         });
         out.innerHTML = U.card('断语', U.sections(r.sections), r.shape.name) +
-          U.modern('palm', r, U.askValue(f)) +
+          U.modern('palm', r, '') +
           U.card('怎样读', '<ul class="feature-list"><li>形为体，纹为用：形定禀赋之偏，纹验气脉之通塞，色察当下之盛衰。</li>' +
             '<li>相书云「相由心生，纹随心转」：掌纹非终身不易，劳逸、情志、病痛皆能改之。</li>' +
             '<li>左右手有别：古法以左手为先天、右手为后天（女则反之），本站不别左右，取通义。</li>' +
@@ -170,8 +169,7 @@
         U.field('口（出纳官）', U.select('口', opts(X.WU_GUAN['口'].opts), '唇厚而方')) +
         U.field('耳（采听官）', U.select('耳', opts(X.WU_GUAN['耳'].opts), '厚大贴脑')) +
         U.field('气色', U.select('qise', opts(X.QI_SE), '明润')) +
-        U.askField('') +
-        '</div><div class="btn-row"><button class="btn" type="submit">出断语</button></div></form></div>' +
+          '</div><div class="btn-row"><button class="btn" type="submit">出断语</button></div></form></div>' +
         '<div id="face-out"></div>';
 
       html += U.card('十二宫', '<table><thead><tr><th>宫</th><th>部位</th><th>所主</th><th>宜</th><th>忌</th></tr></thead><tbody>' +
@@ -192,7 +190,7 @@
           鼻: U.formVal(f, '鼻'), 口: U.formVal(f, '口'), 耳: U.formVal(f, '耳'), qise: U.formVal(f, 'qise')
         });
         out.innerHTML = U.card('断语', U.sections(r.sections), '三停五官') +
-          U.modern('face', r, U.askValue(f)) +
+          U.modern('face', r, '') +
           '<div class="card">' + U.notice('<b>诚实说明：</b>面相之书，条文浩繁而互有出入。本站所引，惟《冰鉴》二句为可查之原文（已加引号），' +
             '余皆标「相书通说」，不冒充某书原句。面相关乎容貌，最易生分别心；古人亦云「相不独论」，须合神、气、声、行而观，' +
             '更不可因一相之「忌」而自弃。') + U.disclaimer() + '</div>' +

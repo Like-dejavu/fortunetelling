@@ -1,7 +1,7 @@
 /* 玄鉴 · 离线缓存
    只在 http/https 下注册（file:// 不支持 Service Worker）。
    本站是纯静态站点，缓存全部即缓存全站。 */
-var CACHE = 'xuanjian-v2';
+var CACHE = 'xuanjian-v3';
 var ASSETS = [
   './',
   'index.html',

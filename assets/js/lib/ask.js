@@ -5,31 +5,32 @@
 (function (root) {
   'use strict';
 
-  var U = root.XJUI || null;
+  /* U 在 app.js 之后才存在：一律用时再取 */
+  function UI() { return root.XJUI || null; }
 
   /* ---------- 文案小件：无 XJUI 时也能在 Node 里跑 ---------- */
   function esc(s) {
     s = (s === null || s === undefined) ? '' : String(s);
-    if (U && U.esc) return U.esc(s);
+    if (UI() && UI().esc) return UI().esc(s);
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
   function card(title, body, tag) {
-    if (U && U.card) return U.card(title, body, tag);
+    if (UI() && UI().card) return UI().card(title, body, tag);
     return '<section class="card">' + (title ? '<div class="card-title"><h2>' + title + '</h2>' +
       (tag ? '<span class="tag">' + tag + '</span>' : '') + '</div>' : '') + body + '</section>';
   }
   function quote(text, src) {
-    if (U && U.quote) return U.quote(text, src);
+    if (UI() && UI().quote) return UI().quote(text, src);
     return '<div class="quote">' + text + (src ? '<span class="src">—— ' + src + '</span>' : '') + '</div>';
   }
   function sections(list) {
-    if (U && U.sections) return U.sections(list);
+    if (UI() && UI().sections) return UI().sections(list);
     return '<div class="section-list">' + list.map(function (s) {
       return '<div class="section-item"><h3>' + s.title + '</h3><p>' + s.body + '</p>' +
         (s.basis ? '<div class="basis">' + s.basis + '</div>' : '') + '</div>';
     }).join('') + '</div>';
   }
-  function hexFigure(bin, mv) { return (U && U.hexFigure) ? U.hexFigure(bin, mv) : '<div class="hex-figure"></div>'; }
+  function hexFigure(bin, mv) { return (UI() && UI().hexFigure) ? UI().hexFigure(bin, mv) : '<div class="hex-figure"></div>'; }
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
   function clockStr(d) { return (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
   function dayStr(d) { return (d.getMonth() + 1) + '月' + d.getDate() + '日'; }
@@ -562,8 +563,18 @@
     return h + '</div>';
   }
 
+  var MOD_LINK = {
+    liuyao: ['#/liuyao', '去看完整六爻排盘'],
+    meihua: ['#/meihua', '去看完整梅花卦'],
+    huangli: ['#/huangli', '去看当日黄历'],
+    dream: ['#/dream', '去看解梦全条'],
+    cezi: ['#/cezi', '去看测字十法']
+  };
+
   function primaryCard(c, u) {
-    return card(c.title, c.body + modernBox(c, u), MOD_NAME[c.module] + ' · 相关 ' + c.score + ' 分');
+    var lk = MOD_LINK[c.module];
+    var jump = lk ? '<p class="small jump-row"><a class="jump" href="' + lk[0] + '">' + lk[1] + ' ›</a></p>' : '';
+    return card(c.title, c.body + modernBox(c, u) + jump, MOD_NAME[c.module] + ' · 相关 ' + c.score + ' 分');
   }
 
   function relatedCard(list) {

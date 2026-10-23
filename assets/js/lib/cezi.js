@@ -11,12 +11,26 @@
 (function (root) {
   'use strict';
 
-  var C = root.XJCalendar;
-  var H = root.XJHanzi;
-  if (!C && typeof require !== 'undefined') { try { C = require('./calendar.js'); } catch (e) { C = null; } }
-  if (!H && typeof require !== 'undefined') { try { H = require('../data/hanzi.js'); } catch (e) { H = null; } }
-  var T = root.XJCeziText || null;
-  if (!T && typeof require !== 'undefined') { try { T = require('../data/cezi-text.js'); } catch (e) { T = null; } }
+  /* 注意：浏览器里 data/ 的脚本在 lib/ 之后才加载（Node 下两者无先后），
+     所以全局对象一律「用时再取」，不能在 IIFE 执行时抓取，否则拿到 undefined。 */
+  function CAL() {
+    var c = root.XJCalendar;
+    if (c) return c;
+    if (typeof require !== 'undefined') { try { return require('./calendar.js'); } catch (e) {} }
+    return null;
+  }
+  function HZ() {
+    var h = root.XJHanzi;
+    if (h) return h;
+    if (typeof require !== 'undefined') { try { return require('../data/hanzi.js'); } catch (e) {} }
+    return null;
+  }
+  function TXT() {
+    var x = root.XJCeziText;
+    if (x) return x;
+    if (typeof require !== 'undefined') { try { return require('../data/cezi-text.js'); } catch (e) {} }
+    return null;
+  }
 
   var WX = ['木', '火', '土', '金', '水'];
   var SHENG = { '木': '火', '火': '土', '土': '金', '金': '水', '水': '木' };   // 我生
@@ -266,6 +280,7 @@
 
   /* ---------- 十法总表（合并数据文件中的引文） ---------- */
   function shifaList() {
+    var T = TXT();
     var out = [], data = (T && T.shifa) || [];
     for (var i = 0; i < FA_ORDER.length; i++) {
       var f = FA_ORDER[i], hit = null;
@@ -337,6 +352,7 @@
     if (!raw) return { error: '请先写一个字。' };
     var ch = raw.charAt(0);
     if (raw.length > 1) opt.multi = raw;
+    var H = HZ();
     var info = H ? H.lookup(ch) : null;
     if (!info) {
       return {
@@ -346,6 +362,7 @@
     }
 
     var dt = opt.date instanceof Date ? opt.date : new Date();
+    var C = CAL();
     var four = C ? C.fourPillars(dt, { ziRule: 'late' }) : null;
     var monthZhi = four ? four.month.zhi : '';
     var dayGan = four ? four.day.gan : '';
@@ -437,9 +454,9 @@
       if (pd) { score += pd; reasons.push({ text: '对关见「' + pair + '」，其字带凶，反观则所测之字未必凶，' + pd, d: pd }); }
     }
 
-    /* 五、所问之事 */
+    /* 五、所问之事（未写所问则只就字论字，此项不加不减） */
     var domain = detectDomain(qText);
-    var aff = AFFINITY[domain.id] || null;
+    var aff = (qText && AFFINITY[domain.id]) ? AFFINITY[domain.id] : null;
     if (aff) {
       var hitWx = aff.wx.indexOf(wx) >= 0;
       var hitBu = aff.bu.indexOf(info.radical) >= 0;
@@ -485,13 +502,13 @@
       body: '本字可用者 ' + appliedList.length + ' 法。<ul class="small" style="margin:8px 0 0;padding-left:20px">' +
         appliedList.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul>',
       basis: '《测字秘牒》十法：装头、接脚、穿心、包笼、破解、添笔、减笔、对关、摘字、观梅（一本作「观枚」）。' +
-        (T && T.books && T.books[0] && T.books[0].src ? '（原书：' + T.books[0].title + '）' : '')
+        ((TXT() && TXT().books && TXT().books[0] && TXT().books[0].src) ? '（原书：' + TXT().books[0].title + '）' : '')
     });
 
     if (four) {
       sections.push({
         title: '时令 · 与月建日辰相参',
-        body: '占时' + C.fmtDate(dt) + '，' + four.year.gan + four.year.zhi + '年 ' + four.month.gan + monthZhi + '月 ' +
+        body: '占时' + (C ? C.fmtDate(dt) : '') + '，' + four.year.gan + four.year.zhi + '年 ' + four.month.gan + monthZhi + '月 ' +
           dayGan + four.day.zhi + '日。字属' + wx + '，月建' + monthZhi + '属' + monthWx + '（' + mRel + '），' +
           '日干' + dayGan + '属' + dayWx + '（' + dRel + '）。' +
           (mRel === '他生我' ? '月建生字，其气得助，事有外来之援。' :
@@ -504,8 +521,10 @@
 
     if (aff) {
       sections.push({
-        title: '所问 · ' + domain.name,
-        body: '君所问者，「' + qText.slice(0, 40) + (qText.length > 40 ? '…' : '') + '」' +
+        title: '所问 · ' + (qText ? domain.name : '未指'),
+        body: (qText
+          ? '君所问者，「' + qText.slice(0, 40) + (qText.length > 40 ? '…' : '') + '」'
+          : '君未指所问，故只就字论字——') +
           '，归于' + domain.name + '。' + aff.note + '。' +
           '本字' + (aff.wx.indexOf(wx) >= 0 ? '五行与所问相得' : '五行与所问不相得') + '，' +
           (aff.bu.indexOf(info.radical) >= 0 ? '部首又合其事之象' : '部首不合其事之象') +
@@ -541,9 +560,9 @@
       reasons: reasons,
       sections: sections,
       shifaAll: shifaList(),
-      books: (T && T.books) || [],
-      rules: (T && T.rules) || [],
-      shenji: (T && T.shenji) || []
+      books: (TXT() && TXT().books) || [],
+      rules: (TXT() && TXT().rules) || [],
+      shenji: (TXT() && TXT().shenji) || []
     };
   }
 

@@ -66,7 +66,7 @@
   </div>
 </footer>
 
-<!-- 内核 -->
+<!-- 内核（无 DOM 依赖） -->
 <script src="assets/js/lib/calendar.js"></script>
 <script src="assets/js/lib/lunar.js"></script>
 <script src="assets/js/lib/bazi.js"></script>
@@ -76,16 +76,18 @@
 <script src="assets/js/lib/heluo.js"></script>
 <script src="assets/js/lib/xiang.js"></script>
 <script src="assets/js/lib/cezi.js"></script>
-<script src="assets/js/lib/modern.js"></script>
-<script src="assets/js/lib/ask.js"></script>
-<!-- 数据 -->
+<!-- 典籍与形数数据 -->
 <script src="assets/js/data/hexagrams.js"></script>
 <script src="assets/js/data/dreams.js"></script>
 <script src="assets/js/data/daodejing.js"></script>
 <script src="assets/js/data/hanzi.js"></script>
 <script src="assets/js/data/cezi-text.js"></script>
-<!-- 外壳与视图 -->
+<!-- 外壳（路由 + UI 助手） -->
 <script src="assets/js/app.js"></script>
+<!-- 问事与现代解释（依赖外壳） -->
+<script src="assets/js/lib/modern.js"></script>
+<script src="assets/js/lib/ask.js"></script>
+<!-- 视图 -->
 <script src="assets/js/views/home.js"></script>
 <script src="assets/js/views/bazi.js"></script>
 <script src="assets/js/views/divine.js"></script>
