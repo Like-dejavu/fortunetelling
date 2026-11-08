@@ -99,6 +99,21 @@
     return '<div class="hex-figure"' + (small ? ' style="padding:10px 8px;gap:5px"' : '') + '>' + lines + '</div>';
   };
 
+  /* 完整阴阳鱼 logo（全站唯一来源）：
+     墨底 + 左半纸白 + 上下两个半圆成 S 界 + 两仪各一鱼眼 + 泥金外圈。
+     旧版把两个鱼眼都画在同色区，形同无眼，故此处以圆叠加构造重写。 */
+  U.taiji = function (cls, ring) {
+    return '<svg class="' + (cls || 'taiji') + '" viewBox="0 0 100 100" aria-hidden="true">' +
+      '<circle cx="50" cy="50" r="48" fill="#1d1b18"/>' +
+      '<path d="M50 2A48 48 0 0 0 50 98Z" fill="#f4eee0"/>' +
+      '<circle cx="50" cy="26" r="24" fill="#f4eee0"/>' +
+      '<circle cx="50" cy="74" r="24" fill="#1d1b18"/>' +
+      '<circle cx="50" cy="26" r="8" fill="#1d1b18"/>' +
+      '<circle cx="50" cy="74" r="8" fill="#f4eee0"/>' +
+      '<circle cx="50" cy="50" r="48" fill="none" stroke="' + (ring || '#a98a52') + '" stroke-width="1.4"/>' +
+      '</svg>';
+  };
+
   U.quote = function (text, src) {
     return '<div class="quote">' + text + (src ? '<span class="src">—— ' + src + '</span>' : '') + '</div>';
   };
@@ -133,28 +148,6 @@
 
   U.notice = function (html) { return '<div class="notice">' + html + '</div>'; };
 
-  /* 结合「所问」把结果译成今日白话；缺引擎时静默返回空串 */
-  U.modern = function (module, result, question) {
-    var M = window.XJModern;
-    if (!M || !M.box) return '';
-    var u = null;
-    try {
-      if (window.XJAsk && window.XJAsk.understand) u = window.XJAsk.understand(question || '');
-    } catch (e) { u = null; }
-    try { return M.box(module, result, u || {}); } catch (e) { return ''; }
-  };
-
-  /* 「所问」输入框：各页共用 */
-  U.askField = function (val, hint) {
-    return U.field('所问何事（可留空）',
-      '<input type="text" name="ask" maxlength="40" value="' + U.esc(val || '') + '" placeholder="如：我下个月能升职吗">',
-      hint || '写一句你真正想问的，末段的现代解释便据此而发；留空则只论其常。');
-  };
-
-  U.askValue = function (form) {
-    try { return String(U.formVal(form, 'ask') || '').replace(/^\s+|\s+$/g, ''); } catch (e) { return ''; }
-  };
-
   U.err = function (msg) { return '<p class="err">' + msg + '</p>'; };
 
   U.disclaimer = function () {
@@ -165,25 +158,89 @@
   };
 
   /* ---------------- 路由 ---------------- */
+  /* 支持 #/page/arg?k=v&k2=v2 —— 问句解析后的参数随链接传递，可刷新、可分享 */
   function currentRoute() {
-    var hash = location.hash.replace(/^#\/?/, '');
-    var parts = hash.split('/');
-    return { id: parts[0] || 'home', arg: parts[1] || '' };
+    var raw = location.hash.replace(/^#\/?/, '');
+    var qi = raw.indexOf('?');
+    var qs = qi >= 0 ? raw.slice(qi + 1) : '';
+    var path = qi >= 0 ? raw.slice(0, qi) : raw;
+    var parts = path.split('/');
+    var params = {};
+    if (qs) qs.split('&').forEach(function (kv) {
+      if (!kv) return;
+      var i = kv.indexOf('=');
+      var k = i < 0 ? kv : kv.slice(0, i), v = i < 0 ? '' : kv.slice(i + 1);
+      try { k = decodeURIComponent(k); v = decodeURIComponent(v); } catch (e) { /* 原样 */ }
+      if (k) params[k] = v;
+    });
+    var arg = parts[1] || '';
+    try { arg = decodeURIComponent(arg); } catch (e) { /* 原样 */ }
+    return { id: parts[0] || 'home', arg: arg, params: params };
   }
 
-  App.go = function (id, arg) {
-    location.hash = '#/' + id + (arg ? '/' + arg : '');
+  App.currentRoute = currentRoute;
+
+  App.go = function (id, arg, params) {
+    var s = '#/' + id + (arg ? '/' + encodeURIComponent(arg) : '');
+    if (params) {
+      var pairs = [];
+      Object.keys(params).forEach(function (k) {
+        var v = params[k];
+        if (v === '' || v == null) return;
+        pairs.push(encodeURIComponent(k) + '=' + encodeURIComponent(v));
+      });
+      if (pairs.length) s += '?' + pairs.join('&');
+    }
+    if (location.hash === s) render();
+    else location.hash = s;
   };
+
+  /* ---------------- 参数预填 ---------------- */
+  var prefillers = {};
+  var focusOracle = null;
+  App.prefill = function (id, fn) { prefillers[id] = fn; };
+  App.onFocusOracle = function (fn) { focusOracle = fn; };
+
+  App.applyParams = function (r) {
+    var fn = prefillers[r.id];
+    if (!fn) return;
+    var keys = Object.keys(r.params || {}).filter(function (k) { return k.charAt(0) !== '_'; });
+    if (!keys.length && !r.arg) return;
+    try { fn(r.params || {}, r.arg || ''); } catch (e) { if (root.console) console.error(e); }
+  };
+
+  /* 来路条：让用户知道自己因哪句话到了这里，并可随时换问法 */
+  function consultHtml(r) {
+    var q = r.params && r.params._q;
+    if (!q || r.id === 'home') return '';
+    var name = r.id;
+    if (root.XJIntent) root.XJIntent.functions.forEach(function (f) { if (f.id === r.id) name = f.name; });
+    var carried = Object.keys(r.params || {}).filter(function (k) { return k.charAt(0) !== '_'; });
+    var sub = '已转至 <b>' + esc(name) + '</b>' +
+      (carried.length || r.arg ? ' · 已带入所问参数并自动推算' : ' · 可在此页细究');
+    return '<div class="consult-bar"><span class="cb-seal">鉴</span>' +
+      '<div class="cb-txt"><div class="cb-q">自「' + esc(q) + '」而来</div>' +
+      '<div class="cb-sub">' + sub + '</div></div>' +
+      '<a href="#/home" class="cb-back">换个问法 ↗</a></div>';
+  }
 
   function render() {
     var r = currentRoute();
     var def = pages[r.id] || pages.home;
     var main = document.getElementById('app');
+    var bar = consultHtml(r);
     main.innerHTML = '';
     try {
       var node = def.render(r.arg);
-      if (typeof node === 'string') main.innerHTML = node;
-      else if (node) main.appendChild(node);
+      if (typeof node === 'string') main.innerHTML = bar + node;
+      else if (node) {
+        main.appendChild(node);
+        if (bar && main.insertBefore) {
+          var d = document.createElement('div');
+          d.innerHTML = bar;
+          if (d.firstElementChild) main.insertBefore(d.firstElementChild, main.firstChild);
+        }
+      }
     } catch (e) {
       main.innerHTML = '<div class="card"><div class="card-title"><h2>出错了</h2></div>' +
         '<p class="err">' + esc(e && e.message ? e.message : e) + '</p>' +
@@ -196,23 +253,24 @@
     });
     window.scrollTo(0, 0);
     if (def.after) try { def.after(r.arg); } catch (e2) { console.error(e2); }
+    App.applyParams(r);
   }
 
   App.render = render;
   App.start = function () {
     window.addEventListener('hashchange', render);
-    /* 顶栏「问事」搜索：把一句话交给问事页（必须 encodeURIComponent，否则含「/」的句子会被 hash 截断） */
-    var tf = document.getElementById('topsearch');
-    if (tf) {
-      tf.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var v = (tf.querySelector('input') || {}).value || '';
-        v = String(v).replace(/^\s+|\s+$/g, '');
-        if (!v) return;
-        var h = '#/ask/' + encodeURIComponent(v);
-        if (location.hash === h) render(); else location.hash = h;
-      });
-    }
+    /* 任意页面按 / 回到主界面并聚焦问句框 */
+    if (document.addEventListener) document.addEventListener('keydown', function (e) {
+      if (!e || e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+      var t = e.target || {}, tag = String(t.tagName || '').toUpperCase();
+      if (/INPUT|TEXTAREA|SELECT/.test(tag) || t.isContentEditable) return;
+      if (e.preventDefault) e.preventDefault();
+      if (currentRoute().id !== 'home') App.go('home');
+      setTimeout(function () {
+        if (focusOracle) focusOracle();
+        else { var el = document.getElementById('portal-q'); if (el && el.focus) el.focus(); }
+      }, 0);
+    });
     render();
   };
 

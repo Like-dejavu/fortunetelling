@@ -33,7 +33,7 @@
         U.field('出生日期（公历）', '<input type="date" name="date" value="1990-06-17">') +
         U.field('出生时辰', U.select('hour', C.ZHI.map(function (z, i) { return { v: i, t: z + '时（' + C.SHICHEN_NAME[i] + '）' }; }), 5)) +
         U.field('性别', U.radios('gender', ['男', '女'], '女'), '决定大限顺逆') +
-          '</div><div class="btn-row"><button class="btn" type="submit">排紫微盘</button>' +
+        '</div><div class="btn-row"><button class="btn" type="submit">排紫微盘</button>' +
         '<span class="muted small">农历范围 1900–2100</span></div></form></div>' +
         '<div id="zw-out"></div>';
       return html;
@@ -46,7 +46,7 @@
           var hz = parseInt(U.formVal(f, 'hour'), 10);
           var dt = new Date(dv[0], dv[1] - 1, dv[2], hz === 0 ? 0 : hz * 2 - 1, 30, 0);
           var r = root.XJZiwei.analyze({ date: dt, gender: U.formVal(f, 'gender') || '男' });
-          out.innerHTML = renderZiwei(r, '');
+          out.innerHTML = renderZiwei(r);
         } catch (e) {
           out.innerHTML = U.err('排盘失败：' + (e && e.message ? e.message : e));
           console.error(e);
@@ -57,7 +57,7 @@
     }
   });
 
-  function renderZiwei(r, q) {
+  function renderZiwei(r) {
     var out = [];
     var cells = [];
     for (var i = 0; i < 12; i++) {
@@ -85,7 +85,7 @@
       '</dl></div></div>';
 
     out.push('<div class="card"><div class="card-title"><h2>命盘</h2><span class="tag">十二宫 · 十四主星</span></div>' +
-      '<div class="zw-scroll"><div class="zw-board">' + center + cells.join('') + '</div></div>' +
+      '<div class="zw-board">' + center + cells.join('') + '</div>' +
       '<p class="small muted" style="margin-top:12px">红框为命宫，身宫另标。星下小字为四化（禄权科忌）。「得地」以星曜五行与宫位五行生克判：宫生星、星宫比和为得地，星生宫为泄，宫克星为受制。</p></div>');
 
     /* 命宫断 */
@@ -119,9 +119,6 @@
     }
     out.push(U.card('命理断语', U.sections(secs), '依法推演'));
 
-    var mBox = U.modern('ziwei', r, q);
-    if (mBox) out.push(mBox);
-
     /* 大限 */
     out.push(U.card('大限', '<table><thead><tr><th>限</th><th>宫位</th><th>干支</th><th>岁数</th><th>主星</th></tr></thead><tbody>' +
       r.dayun.map(function (d, i) {
@@ -148,7 +145,7 @@
         U.field('出生日期（公历）', '<input type="date" name="date" value="1990-06-17">') +
         U.field('出生时刻', '<input type="time" name="time" value="10:30">') +
         U.field('性别', U.radios('gender', ['男', '女'], '男')) +
-          '</div><div class="btn-row"><button class="btn" type="submit">推河洛数</button></div></form></div>' +
+        '</div><div class="btn-row"><button class="btn" type="submit">推河洛数</button></div></form></div>' +
         '<div id="hl2-out"></div>';
 
       html += U.card('化数表', '<table><thead><tr><th>天干（河图数）</th><th>数</th><th>地支（洛书数）</th><th>数</th></tr></thead><tbody>' +
@@ -170,7 +167,7 @@
           var tv = U.formVal(f, 'time').split(':').map(Number);
           var dt = new Date(dv[0], dv[1] - 1, dv[2], tv[0] || 0, tv[1] || 0, 0);
           var r = root.XJHeluo.analyze({ date: dt, gender: U.formVal(f, 'gender') || '男', year: dv[0] });
-          out.innerHTML = renderHeluo(r, '');
+          out.innerHTML = renderHeluo(r);
         } catch (e) {
           out.innerHTML = U.err('起数失败：' + (e && e.message ? e.message : e));
           console.error(e);
@@ -181,7 +178,7 @@
     }
   });
 
-  function renderHeluo(r, q) {
+  function renderHeluo(r) {
     var out = [];
     out.push(U.card('化数', '<table><thead><tr><th>柱</th><th>干支</th><th>干数</th><th>支数</th><th>归</th></tr></thead><tbody>' +
       r.detail.map(function (d) {
@@ -220,8 +217,6 @@
       if (b) t += '<hr class="rule"><h3>' + b.full + '</h3>' + U.quote('「' + b.text + '」', '卦辞');
       if (t) out.push(U.card('卦辞', t, '《周易》'));
     }
-    var mBox2 = U.modern('heluo', r, q);
-    if (mBox2) out.push(mBox2);
     out.push('<div class="card">' + U.notice('<b>传本之异：</b>河洛理数求数之法，传本略有出入（有以天干配洛书、地支配河图者，亦有专用太玄数者）。' +
       '本站依《河洛真数》原文「天干配河图之数、地支配洛书之数」之说，并依「遇十不用」「遇五寄宫」二例，过程全列于上，供君按验。') + U.disclaimer() + '</div>');
     return out.join('');

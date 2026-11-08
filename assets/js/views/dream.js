@@ -88,22 +88,18 @@
     after: function () {
       var q = document.getElementById('dream-q'), out = document.getElementById('dream-out');
 
-      function showList(title, rows, qtext) {
-        var body = rows.length ?
+      function showList(title, rows) {
+        out.innerHTML = U.card(title, rows.length ?
           '<div class="dream-list">' + rows.map(function (r) { return itemHtml(r.row || r, true); }).join('') + '</div>' :
-          '<p class="muted">未找到相关梦象。可换用更短的词，如「蛇」「水」「火」「血」「牙」。</p>';
-        var mb = '';
-        if (rows.length) {
-          try { mb = U.modern('dream', { items: rows.map(function (r) { return r.row || r; }), cats: [] }, qtext || '') || ''; } catch (e) { mb = ''; }
-        }
-        out.innerHTML = U.card(title, body, rows.length + ' 条') + mb;
+          '<p class="muted">未找到相关梦象。可换用更短的词，如「蛇」「水」「火」「血」「牙」。</p>',
+          rows.length + ' 条');
       }
 
       function doSearch() {
         var v = q.value.trim();
         if (!v) { out.innerHTML = ''; return; }
         var hits = search(v).slice(0, 40);
-        showList('「' + v + '」之解', hits, v);
+        showList('「' + v + '」之解', hits);
       }
 
       U.on(q, 'input', function () {
@@ -126,9 +122,9 @@
         });
       });
 
-      /* 路由参数可直接查 */
-      var arg = (location.hash || '').split('/')[2];
-      if (arg) { q.value = decodeURIComponent(arg); doSearch(); }
+      /* 路由参数可直接查（兼容 ?k=v 形式的主界面跳转） */
+      var arg = (App && App.currentRoute) ? App.currentRoute().arg : (location.hash || '').split('/')[2];
+      if (arg) { q.value = arg; doSearch(); }
     }
   });
 }(typeof window !== 'undefined' ? window : this));

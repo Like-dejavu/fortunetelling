@@ -3,7 +3,7 @@
   'use strict';
   var App = root.XJApp, U = root.XJUI, C = root.XJCalendar, B = root.XJBazi;
 
-  function renderResult(r, q) {
+  function renderResult(r) {
     var out = [];
     var f = r.pillars;
     var d = r.detail;
@@ -97,9 +97,6 @@
     /* 断语 */
     out.push(U.card('断语', U.sections(r.sections), '每条皆附所据'));
 
-    var mBox = U.modern('bazi', r, q);
-    if (mBox) out.push(mBox);
-
     out.push('<div class="card">' + U.notice('<b>读法：</b>八字所论者，「气势之偏」与「用神之向」而已。格局定其体，用神定其用，大运流年定其时。' +
       '若用神得地而得运助，则偏者可正；若忌神当令，则虽美格亦有蹇滞。此中轻重，页内已逐条列明。') + U.disclaimer() + '</div>');
     return out.join('');
@@ -119,7 +116,7 @@
         U.field('子时划分', U.select('ziRule', [{ v: 'late', t: '夜子时（23:00 起为次日）' }, { v: 'early', t: '早子时（23:00 仍属当日）' }], 'late')) +
         U.field('经度（真太阳时）', '<input type="number" name="lon" value="116.4" step="0.1" min="73" max="135">', '东经，北京 116.4，上海 121.5') +
         U.field('真太阳时', U.radios('ts', [{ v: '1', t: '校正' }, { v: '0', t: '不校正' }], '1'), '校正含经度差与均时差') +
-          '</div><div class="btn-row"><button class="btn" type="submit">排盘</button>' +
+        '</div><div class="btn-row"><button class="btn" type="submit">排盘</button>' +
         '<span class="muted small">日期范围 1900–2100（农历表上限）；节气时刻误差约数分钟</span></div></form></div>';
 
       html += '<div id="bz-out"></div>';
@@ -141,7 +138,7 @@
             trueSolar: U.formVal(f, 'ts') === '1',
             longitude: parseFloat(U.formVal(f, 'lon')) || 120
           });
-          out.innerHTML = renderResult(r, '');
+          out.innerHTML = renderResult(r);
         } catch (e) {
           out.innerHTML = U.err('排盘失败：' + (e && e.message ? e.message : e));
           console.error(e);

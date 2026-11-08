@@ -57,7 +57,7 @@
           var dt = new Date(p[0], p[1] - 1, p[2], new Date().getHours(), 0, 0);
           var q = U.formVal(f, 'q') || '';
           var r = root.XJLiuyao.analyze({ vals: vals, date: dt, question: q });
-          out.innerHTML = renderLiuyao(r, q);
+          out.innerHTML = renderLiuyao(r);
         } catch (e) {
           out.innerHTML = U.err('起卦失败：' + (e && e.message ? e.message : e));
           console.error(e);
@@ -75,7 +75,7 @@
     }
   });
 
-  function renderLiuyao(r, q) {
+  function renderLiuyao(r) {
     var ben = r.ben, bian = r.bian, j = r.judge;
     var out = [];
 
@@ -140,8 +140,6 @@
       }
       out.push(U.card('卦爻辞', t, '《周易》'));
     }
-    var mBox = U.modern('liuyao', r, q || r.question);
-    if (mBox) out.push(mBox);
     out.push('<div class="card">' + U.notice('<b>断法要点：</b>用神为事之主体，原神生之、忌神克之、仇神克原神。月建司一月之权，日辰主一日之令，' +
       '「月建为提纲，日辰为主宰」。用神旺相而临日月、得动爻生扶者吉；休囚而受克、逢空破者凶。动必有因，变必有应，' +
       '故须兼看变爻回头生克。') + '</div>');
@@ -197,7 +195,7 @@
             cast = root.XJMeihua.numGua(parseInt(U.formVal(f, 'n1'), 10) || 0, parseInt(U.formVal(f, 'n2'), 10) || 0);
           }
           var r = root.XJMeihua.analyze(cast, { question: U.formVal(f, 'q') });
-          out.innerHTML = renderMeihua(r, U.formVal(f, 'q'));
+          out.innerHTML = renderMeihua(r);
         } catch (e) {
           out.innerHTML = U.err('起卦失败：' + (e && e.message ? e.message : e));
           console.error(e);
@@ -208,7 +206,7 @@
     }
   });
 
-  function renderMeihua(r, q) {
+  function renderMeihua(r) {
     var out = [];
     out.push(U.card('起卦', '<p class="small">' + r.cast.method + '：' + r.cast.calc + '</p>' +
       '<div class="hex-wrap" style="grid-template-columns:repeat(3,1fr);gap:16px;margin-top:10px">' +
@@ -235,8 +233,6 @@
     if (info) {
       out.push(U.card('卦辞', hexagramText(info), '《周易》'));
     }
-    var mBox = U.modern('meihua', r, q);
-    if (mBox) out.push(mBox);
     out.push('<div class="card">' + U.notice('<b>体用之要：</b>体为己身、为所问之事的主体，用为所应之事、为外缘。' +
       '体宜旺不宜衰，用宜生体不宜克体。互卦见事之中途，变卦见事之结局。' +
       '《梅花易数》云「体用之诀，以动静论之」——动者为用，静者为体，此其纲也。') + '</div>');

@@ -1,4 +1,9 @@
-﻿_qa/
+_qa/
 *.zip
 .DS_Store
 Thumbs.db
+.idea/
+python.project/
+.vscode/
+__pycache__/
+*.pyc

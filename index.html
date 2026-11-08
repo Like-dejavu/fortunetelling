@@ -3,17 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>玄鉴 · 依经据典的术数推演</title>
-<meta name="description" content="玄鉴：周公解梦、择日吉凶、四柱八字、六爻纳甲、梅花易数、紫微斗数、河洛理数、手相面相、道德经。一切推算皆列依据与过程。">
+<title>玄鉴 · 一问直达的术数推演</title>
+<meta name="description" content="玄鉴：写下所问，自动辨明意图并直达对应功能。周公解梦、择日吉凶、四柱八字、六爻纳甲、梅花易数、紫微斗数、河洛理数、手相面相、道德经。一切推算皆列依据与过程。">
 <meta name="theme-color" content="#9c3320">
-<meta name="format-detection" content="telephone=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="玄鉴">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
-<link rel="apple-touch-icon" href="assets/img/icon-192.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="玄鉴">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -21,32 +20,27 @@
 <header class="topbar">
   <div class="topbar-in">
     <div class="brand">
-      <div class="brand-seal">玄</div>
+      <div class="brand-seal"><img class="brand-taiji" src="assets/img/taiji.svg" alt="玄鉴 · 阴阳鱼"></div>
       <div class="brand-txt">
         <span class="brand-name">玄鉴</span>
         <span class="brand-sub">观象 · 知数 · 明理</span>
       </div>
     </div>
     <nav class="nav">
-      <a href="#/home" data-route="home">首页</a>
-      <a href="#/ask" data-route="ask">问事</a>
+      <a href="#/home" data-route="home" class="nav-home">主界面</a>
       <a href="#/huangli" data-route="huangli">黄历吉凶</a>
       <a href="#/bazi" data-route="bazi">四柱八字</a>
       <a href="#/liuyao" data-route="liuyao">六爻纳甲</a>
       <a href="#/meihua" data-route="meihua">梅花易数</a>
       <a href="#/ziwei" data-route="ziwei">紫微斗数</a>
       <a href="#/heluo" data-route="heluo">河洛理数</a>
-      <a href="#/cezi" data-route="cezi">测字</a>
       <a href="#/dream" data-route="dream">周公解梦</a>
       <a href="#/palm" data-route="palm">手相</a>
       <a href="#/face" data-route="face">面相</a>
       <a href="#/daodejing" data-route="daodejing">道德经</a>
       <a href="#/about" data-route="about">依据</a>
+      <a href="#/mine" data-route="mine" class="nav-mine">我的</a>
     </nav>
-    <form class="topsearch" id="topsearch" role="search">
-      <input type="search" name="tsq" placeholder="问一件事，如「下月能升职吗」" maxlength="60" aria-label="问事">
-      <button type="submit" aria-label="就此事问卦">问</button>
-    </form>
   </div>
 </header>
 
@@ -66,7 +60,7 @@
   </div>
 </footer>
 
-<!-- 内核（无 DOM 依赖） -->
+<!-- 内核 -->
 <script src="assets/js/lib/calendar.js"></script>
 <script src="assets/js/lib/lunar.js"></script>
 <script src="assets/js/lib/bazi.js"></script>
@@ -75,31 +69,55 @@
 <script src="assets/js/lib/ziwei.js"></script>
 <script src="assets/js/lib/heluo.js"></script>
 <script src="assets/js/lib/xiang.js"></script>
-<script src="assets/js/lib/cezi.js"></script>
-<!-- 典籍与形数数据 -->
+<!-- 数据 -->
 <script src="assets/js/data/hexagrams.js"></script>
 <script src="assets/js/data/dreams.js"></script>
 <script src="assets/js/data/daodejing.js"></script>
-<script src="assets/js/data/hanzi.js"></script>
-<script src="assets/js/data/cezi-text.js"></script>
-<!-- 外壳（路由 + UI 助手） -->
+<!-- 外壳与视图 -->
 <script src="assets/js/app.js"></script>
-<!-- 问事与现代解释（依赖外壳） -->
-<script src="assets/js/lib/modern.js"></script>
-<script src="assets/js/lib/ask.js"></script>
-<!-- 视图 -->
+<script src="assets/js/intent.js"></script>
+<script src="assets/js/history.js"></script>
 <script src="assets/js/views/home.js"></script>
 <script src="assets/js/views/bazi.js"></script>
 <script src="assets/js/views/divine.js"></script>
 <script src="assets/js/views/ziwei.js"></script>
 <script src="assets/js/views/xiang.js"></script>
 <script src="assets/js/views/dream.js"></script>
-<script src="assets/js/views/cezi.js"></script>
-<script src="assets/js/views/ask.js"></script>
 <script src="assets/js/views/daodejing.js"></script>
-<script src="assets/js/pwa.js"></script>
+<script src="assets/js/views/mine.js"></script>
+<!-- 智能主界面：覆盖 home 路由，并注册各页参数预填（须置于所有视图之后） -->
+<script src="assets/js/views/portal.js"></script>
 <script>
   if (window.XJApp) XJApp.start();
+</script>
+
+<button id="xj-install" class="install-fab" type="button" hidden><span>↓</span> 安装到手机</button>
+<script>
+/* PWA：注册 Service Worker + 浏览器原生安装提示。
+   file:// 双击打开时不注册（浏览器也不允许），站点本身仍可正常使用。 */
+(function () {
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js').catch(function () {});
+    });
+  }
+  var btn = document.getElementById('xj-install');
+  var deferred = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferred = e;
+    if (btn) btn.hidden = false;
+  });
+  window.addEventListener('appinstalled', function () {
+    deferred = null;
+    if (btn) btn.hidden = true;
+  });
+  if (btn) btn.addEventListener('click', function () {
+    if (!deferred) return;
+    deferred.prompt();
+    deferred.userChoice.then(function () { deferred = null; btn.hidden = true; });
+  });
+}());
 </script>
 </body>
 </html>
