@@ -23,6 +23,9 @@ python -m http.server 8000
 
 > 若想在手机上**安装成 App**、离线可用，见「九、装到手机上」：那需要 `https://` 或 `localhost`，`file://` 双击方式不支持安装，但站点本身照常可用。
 
+**线上托管（GitHub Pages）**：<https://like-dejavu.github.io/fortunetelling/>
+源码仓库：<https://github.com/Like-dejavu/fortunetelling> —— `main` 为当前版本，旧版（含测字／问事／现代占卜）备份在 `legacy` 分支。手机浏览器打开线上地址即可「安装应用」或「添加到主屏幕」，支持离线使用。
+
 ---
 
 ## 二、页面一览
